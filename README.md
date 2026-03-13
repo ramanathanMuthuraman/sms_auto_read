@@ -48,9 +48,3 @@ flutter run
 2. Send an OTP SMS (include a 4-8 digit code by default).
 3. Accept the Android consent dialog.
 4. App should display extracted code and full SMS.
-
-## Notes
-
-- Default OTP regex is `\\d{4,8}` and can be changed in the UI.
-- No `READ_SMS` permission is needed for these APIs.
-- If OTP is not extracted, check regex and SMS format.

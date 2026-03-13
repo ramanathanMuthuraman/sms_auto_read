@@ -33,13 +33,7 @@ class SmsSpikePage extends StatefulWidget {
 }
 
 class _SmsSpikePageState extends State<SmsSpikePage> {
-  static const String _defaultMatcher = r'\d{4,8}';
-
   final SmartAuth _smartAuth = SmartAuth.instance;
-  final TextEditingController _senderController = TextEditingController();
-  final TextEditingController _matcherController = TextEditingController(
-    text: _defaultMatcher,
-  );
 
   String _status = 'Ready';
   String? _appSignature;
@@ -47,11 +41,6 @@ class _SmsSpikePageState extends State<SmsSpikePage> {
   String? _lastSms;
   String? _lastCode;
   bool _busy = false;
-
-  String get _matcher {
-    final matcher = _matcherController.text.trim();
-    return matcher.isEmpty ? _defaultMatcher : matcher;
-  }
 
   Future<void> _runAction(
     String actionLabel,
@@ -110,7 +99,7 @@ class _SmsSpikePageState extends State<SmsSpikePage> {
   }
 
   Future<void> _startRetrieverFlow() async {
-    final result = await _smartAuth.getSmsWithRetrieverApi(matcher: _matcher);
+    final result = await _smartAuth.getSmsWithRetrieverApi();
     if (!mounted) return;
 
     if (result.hasData) {
@@ -129,12 +118,7 @@ class _SmsSpikePageState extends State<SmsSpikePage> {
   }
 
   Future<void> _startUserConsentFlow() async {
-    final sender = _senderController.text.trim();
-
-    final result = await _smartAuth.getSmsWithUserConsentApi(
-      matcher: _matcher,
-      senderPhoneNumber: sender.isEmpty ? null : sender,
-    );
+    final result = await _smartAuth.getSmsWithUserConsentApi();
 
     if (!mounted) return;
 
@@ -171,8 +155,6 @@ class _SmsSpikePageState extends State<SmsSpikePage> {
   void dispose() {
     unawaited(_smartAuth.removeUserConsentApiListener());
     unawaited(_smartAuth.removeSmsRetrieverApiListener());
-    _senderController.dispose();
-    _matcherController.dispose();
     super.dispose();
   }
 
@@ -188,10 +170,6 @@ class _SmsSpikePageState extends State<SmsSpikePage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                'Run on a physical Android device with Google Play Services.',
-                style: theme.textTheme.bodyLarge,
-              ),
               const SizedBox(height: 12),
               SelectableText('Status: $_status'),
               const SizedBox(height: 16),
@@ -240,31 +218,6 @@ class _SmsSpikePageState extends State<SmsSpikePage> {
                 ),
               ),
               const SizedBox(height: 12),
-              _SectionCard(
-                title: 'SMS Capture Settings',
-                child: Column(
-                  children: [
-                    TextField(
-                      controller: _matcherController,
-                      decoration: const InputDecoration(
-                        labelText: 'OTP regex matcher',
-                        helperText: r'Example: \d{4,8}',
-                        border: OutlineInputBorder(),
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    TextField(
-                      controller: _senderController,
-                      decoration: const InputDecoration(
-                        labelText: 'Sender phone number (User Consent only)',
-                        helperText: 'Optional, include country code if used.',
-                        border: OutlineInputBorder(),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 12),
               Wrap(
                 spacing: 10,
                 runSpacing: 10,
@@ -298,15 +251,6 @@ class _SmsSpikePageState extends State<SmsSpikePage> {
               _SectionCard(
                 title: 'Last SMS Body',
                 child: SelectableText(_lastSms ?? 'No SMS captured yet.'),
-              ),
-              const SizedBox(height: 12),
-              _SectionCard(
-                title: 'SMS Template (Retriever API)',
-                child: SelectableText(
-                  _appSignature == null
-                      ? 'Load app signature first, then include it at the end of your OTP SMS.'
-                      : '<#> Your OTP is 123456\n$_appSignature',
-                ),
               ),
             ],
           ),

@@ -70,7 +70,6 @@ class _SmsSpikePageState extends State<SmsSpikePage> {
       setState(() {
         _appSignature = result.requireData;
         _status = 'App signature loaded.';
-        print(_appSignature);
       });
       return;
     }
@@ -160,8 +159,6 @@ class _SmsSpikePageState extends State<SmsSpikePage> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
     return Scaffold(
       appBar: AppBar(title: const Text('Smart Auth SMS Spike')),
       body: SafeArea(

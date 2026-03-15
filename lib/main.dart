@@ -107,7 +107,7 @@ class _SmsSpikePageState extends State<SmsSpikePage> {
         _lastSms = sms.sms;
         _lastCode = sms.code;
         _status = sms.code == null
-            ? 'SMS received via Retriever API, but no code matched your regex.'
+            ? 'SMS received via Retriever API, but no code matched the regex.'
             : 'OTP captured via Retriever API.';
       });
       return;
@@ -127,7 +127,7 @@ class _SmsSpikePageState extends State<SmsSpikePage> {
         _lastSms = sms.sms;
         _lastCode = sms.code;
         _status = sms.code == null
-            ? 'SMS received via User Consent, but no code matched your regex.'
+            ? 'SMS received via User Consent, but no code matched the regex.'
             : 'OTP captured via User Consent API.';
       });
       return;
